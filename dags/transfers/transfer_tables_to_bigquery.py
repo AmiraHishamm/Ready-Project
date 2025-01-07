@@ -8,7 +8,7 @@ import requests
 import json
 from google.cloud import storage
 
-GCS_BUCKET = "us-central1-project-compose-548880f9-bucket/dags/amira"
+GCS_BUCKET = "ready-d25-postgres-to-gcs"
 PROJECT_ID = "ready-de-25"
 BQ_DATASET = "olist_amira"
 
@@ -34,15 +34,15 @@ for table in postgres_tables:
           task_id=f'transfer_postgres_to_gcs_{table}',
           postgres_conn_id="postgres_conn",
           sql=f"SELECT * FROM {table}",
-          bucket_name=GCS_BUCKET,
-          filename=f"Transfer/{table}.json",
+          bucket=GCS_BUCKET,
+          filename=f"amira/{table}.json",
           export_format='json',
           dag=dag1
     )
     load_from_gcs_to_bigquery = GCSToBigQueryOperator(
           task_id=f'load_gcs_to_bigquery_{table}',
-          bucket_name=GCS_BUCKET,
-          source_objects=[f"Transfer/{table}.json"],
+          bucket=GCS_BUCKET,
+          source_objects=[f"amira/{table}.json"],
           destination_project_dataset_table=f"{PROJECT_ID}.{BQ_DATASET}.{table}",
           write_disposition='WRITE_TRUNCATE',
           skip_leading_rows=1,
@@ -82,7 +82,7 @@ for table, api_url in api_endpoints.items():
 
     load_from_gcs_to_bigquery = GCSToBigQueryOperator(
         task_id=f'gcs_to_bigquery_{table}',
-        bucket_name=GCS_BUCKET,
+        bucket=GCS_BUCKET,
         source_objects=[f"{table}.json"],
         destination_project_dataset_table=f"{PROJECT_ID}.{BQ_DATASET}.{table}",
         write_disposition='WRITE_TRUNCATE',

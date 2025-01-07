@@ -43,7 +43,6 @@ for table in postgres_tables:
           bucket_name=GCS_BUCKET,
           source_objects=[f"Transfer/{table}.csv"],
           destination_project_dataset_table=f"{PROJECT_ID}.{BQ_DATASET}.{table}",
-          source_format='NEWLINE_DELIMITED_JSON',
           write_disposition='WRITE_TRUNCATE',
           skip_leading_rows=1,
           source_format='CSV',

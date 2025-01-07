@@ -6,7 +6,6 @@ from airflow.providers.google.cloud.transfers.gcs_to_bigquery import (GCSToBigQu
 from airflow.operators.python import PythonOperator
 from datetime import datetime
 import requests
-import json
 from google.cloud import storage
 
 GCS_BUCKET = "ready-d25-postgres-to-gcs"
@@ -36,18 +35,18 @@ for table in postgres_tables:
           postgres_conn_id="postgres_conn",
           sql=f"SELECT * FROM {table}",
           bucket=GCS_BUCKET,
-          filename=f"amira/{table}.json",
-          export_format='json',
+          filename=f"amira/{table}.csv",
+          export_format='csv',
           dag=dag1
     )
     load_from_gcs_to_bigquery = GCSToBigQueryOperator(
           task_id=f'load_gcs_to_bigquery_{table}',
           bucket=GCS_BUCKET,
-          source_objects=[f"amira/{table}.json"],
+          source_objects=[f"amira/{table}.csv"],
           destination_project_dataset_table=f"{PROJECT_ID}.{BQ_DATASET}.{table}",
           write_disposition='WRITE_TRUNCATE',
           skip_leading_rows=1,
-          source_format='json',
+          source_format='csv',
           autodetect=True,
           dag=dag1
     )
@@ -59,24 +58,23 @@ api_endpoints = {
     "sellers": "https://us-central1-ready-de-25.cloudfunctions.net/sellers_table",
 }
 
-
-def fetch_api_and_upload_to_gcs(api_url, gcs_object_name):
+def fetch_csv_and_upload_to_gcs(api_url, gcs_object_name):
     response = requests.get(api_url)
     response.raise_for_status()
-    data = response.json()
+    csv_data = response.text
 
     storage_client = storage.Client()
     bucket = storage_client.bucket(GCS_BUCKET)
     blob = bucket.blob(gcs_object_name)
-    blob.upload_from_string(json.dumps(data), content_type='application/json')
+    blob.upload_from_string(csv_data, content_type='text/csv')
 
 for table, api_url in api_endpoints.items():
     fetch_api_task = PythonOperator(
         task_id=f'fetch_api_{table}',
-        python_callable=fetch_api_and_upload_to_gcs,
+        python_callable=fetch_csv_and_upload_to_gcs,
         op_kwargs={
             'api_url': api_url,
-            'gcs_object_name': f"{table}.json",
+            'gcs_object_name': f"{table}.csv",
         },
         dag=dag1,
     )
@@ -84,10 +82,10 @@ for table, api_url in api_endpoints.items():
     load_from_gcs_to_bigquery = GCSToBigQueryOperator(
         task_id=f'gcs_to_bigquery_{table}',
         bucket=GCS_BUCKET,
-        source_objects=[f"{table}.json"],
+        source_objects=[f"{table}.csv"],
         destination_project_dataset_table=f"{PROJECT_ID}.{BQ_DATASET}.{table}",
         write_disposition='WRITE_TRUNCATE',
-        source_format='NEWLINE_DELIMITED_JSON',
+        source_format='CSV',
         autodetect=True,
         dag=dag1,
     )

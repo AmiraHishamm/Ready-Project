@@ -34,19 +34,18 @@ for table in postgres_tables:
           postgres_conn_id="postgres_conn",
           sql=f"SELECT * FROM {table}",
           bucket_name=GCS_BUCKET,
-          filename=f"Transfer/{table}.csv",
-          export_format='csv',
+          filename=f"Transfer/{table}.json",
+          export_format='json',
           dag=dag1
     )
     load_from_gcs_to_bigquery = GCSToBigQueryOperator(
           task_id=f'load_gcs_to_bigquery_{table}',
           bucket_name=GCS_BUCKET,
-          source_objects=[f"Transfer/{table}.csv"],
+          source_objects=[f"Transfer/{table}.json"],
           destination_project_dataset_table=f"{PROJECT_ID}.{BQ_DATASET}.{table}",
-          source_format='NEWLINE_DELIMITED_JSON',
           write_disposition='WRITE_TRUNCATE',
           skip_leading_rows=1,
-          source_format='CSV',
+          source_format='json',
           autodetect=True,
           dag=dag1
     )

@@ -12,9 +12,7 @@ PROJECT_ID = "ready-de-25"
 BQ_DATASET = "olist_amira"
 
 default_args = {
-    'retries': 1,
-    'retry_delay': timedelta(minutes=5),
-    'execution_timeout': timedelta(minutes=30),
+    'retries': 1
 }
 
 dag1 = DAG(

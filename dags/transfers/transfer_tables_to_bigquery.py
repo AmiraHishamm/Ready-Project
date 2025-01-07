@@ -7,7 +7,7 @@ import requests
 import json
 from google.cloud import storage
 
-GCS_BUCKET = "us-central1-project-compose-548880f9-bucket/dags/amira"  # Replace with your GCS bucket name
+GCS_BUCKET = "us-central1-project-compose-548880f9-bucket/dags/amira"
 PROJECT_ID = "ready-de-25"
 BQ_DATASET = "olist_amira"
 

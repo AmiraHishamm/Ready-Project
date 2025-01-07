@@ -91,4 +91,4 @@ for table, api_url in api_endpoints.items():
         dag=dag1,
     )
 
-    fetch_api_task >> load_from_gcs_to_bigquery
+fetch_api_task >> load_from_gcs_to_bigquery

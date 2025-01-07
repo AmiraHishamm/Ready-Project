@@ -16,7 +16,7 @@ default_args = {
 }
 
 dag1 = DAG(
-    'Transfer_postgres_to_bigquery_amira',
+    'Transfer_tables_to_bigquery_amira',
     default_args=default_args,
     start_date=datetime(2025, 1, 7),
     description='Transfer postgres to gcs and from gcs to bigquery',

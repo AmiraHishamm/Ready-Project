@@ -1,8 +1,7 @@
 from airflow import DAG
 from airflow.providers.google.cloud.transfers.postgres_to_gcs import (
-    PostgresToGCSOperator,
+    PostgresToGCSOperator, GCSToBigQueryOperator
 )
-from airflow.providers.google.cloud.transfers.gcs_to_bigquery import GCSToBigQueryOperator
 from airflow.operators.python import PythonOperator
 from datetime import datetime
 import requests

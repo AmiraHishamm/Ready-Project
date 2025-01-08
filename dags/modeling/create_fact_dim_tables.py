@@ -85,17 +85,17 @@ SELECT
 FROM `{PROJECT_ID}.{DATASET_ID}.orders` o;
 """
 
-
 sql_fact_orders = f"""
 CREATE OR REPLACE TABLE `{PROJECT_ID}.{TARGET_DATASET_ID}.fact_orders` AS
 SELECT
-    order_id,
-    order_item_id,
-    product_id,
-    seller_id,
-    price,
-    freight_value
-FROM `{PROJECT_ID}.{DATASET_ID}.order_items`;
+    oi.order_id,
+    oi.order_item_id,
+    oi.product_id,
+    oi.seller_id,
+    oi.price,
+    oi.freight_value
+FROM `{PROJECT_ID}.{DATASET_ID}.order_items` oi
+WHERE oi.order_id IS NOT NULL;
 """
 
 create_dim_customers = BigQueryInsertJobOperator(

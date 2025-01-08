@@ -23,11 +23,13 @@ CREATE OR REPLACE VIEW `{PROJECT_ID}.{TARGET_DATASET_ID}.top_customers_view` AS
 SELECT
     c.customer_id,
     c.customer_unique_id,
-    SUM(oi.price * oi.freight_value) AS total_order_value
+    SUM(IFNULL(oi.price, 0) + IFNULL(oi.freight_value, 0)) AS total_order_value
 FROM
     `{PROJECT_ID}.{TARGET_DATASET_ID}.dim_customers` c
 JOIN
-    `{PROJECT_ID}.{TARGET_DATASET_ID}.fact_orders` oi ON c.customer_id = oi.order_id
+    `{PROJECT_ID}.{TARGET_DATASET_ID}.dim_dates` d ON c.customer_id = d.order_id
+JOIN
+    `{PROJECT_ID}.{TARGET_DATASET_ID}.fact_orders` oi ON d.order_id = oi.order_id
 GROUP BY
     c.customer_id, c.customer_unique_id
 ORDER BY
@@ -41,14 +43,12 @@ SELECT
     COUNT(DISTINCT o.order_id) AS total_orders,
     COUNT(DISTINCT o.order_id) / COUNT(DISTINCT c.customer_id) AS avg_orders_per_customer
 FROM
-    `{PROJECT_ID}.{TARGET_DATASET_ID}.fact_orders` o
+    `{PROJECT_ID}.{TARGET_DATASET_ID}.dim_customers` c
 JOIN
-    `{PROJECT_ID}.{TARGET_DATASET_ID}.dim_customers` c ON o.order_id = c.customer_id
+    `{PROJECT_ID}.{TARGET_DATASET_ID}.dim_dates` o ON c.customer_id = o.customer_id  -- Link customers to orders
 GROUP BY
     c.customer_id;
-
 """
-
 
 sql_view_top_products = f"""
 CREATE OR REPLACE VIEW `{PROJECT_ID}.{TARGET_DATASET_ID}.top_selling_products_by_quantity` AS

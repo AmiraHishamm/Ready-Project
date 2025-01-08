@@ -37,15 +37,18 @@ ORDER BY
 sql_orders_avg = f"""
 CREATE OR REPLACE VIEW `{PROJECT_ID}.{TARGET_DATASET_ID}.avg_orders_view` AS
 SELECT
-    customer_id,
-    COUNT(DISTINCT order_id) AS total_orders,
-    COUNT(DISTINCT order_id) / COUNT(DISTINCT customer_id) AS avg_orders_per_customer
+    c.customer_id,
+    COUNT(DISTINCT o.order_id) AS total_orders,
+    COUNT(DISTINCT o.order_id) / COUNT(DISTINCT c.customer_id) AS avg_orders_per_customer
 FROM
-    `{PROJECT_ID}.{TARGET_DATASET_ID}.fact_orders`
+    `{PROJECT_ID}.{TARGET_DATASET_ID}.fact_orders` o
+JOIN
+    `{PROJECT_ID}.{TARGET_DATASET_ID}.dim_customers` c ON o.order_id = c.customer_id  -- Join to get customer_id from dim_customers
 GROUP BY
-    customer_id;
+    c.customer_id;
 
 """
+
 
 sql_view_top_products = f"""
 CREATE OR REPLACE VIEW `{PROJECT_ID}.{TARGET_DATASET_ID}.top_selling_products_view` AS

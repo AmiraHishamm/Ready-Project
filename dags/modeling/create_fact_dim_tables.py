@@ -78,11 +78,13 @@ FROM `{PROJECT_ID}.{DATASET_ID}.order_payment`;
 sql_dim_dates = f"""
 CREATE OR REPLACE TABLE `{PROJECT_ID}.{TARGET_DATASET_ID}.dim_dates` AS
 SELECT
-    order_id,
-    order_purchase_timestamp,
-    order_estimated_delivery_date
-FROM `{PROJECT_ID}.{DATASET_ID}.orders`;
+    o.order_id,
+    o.customer_id,
+    o.order_purchase_timestamp,
+    o.order_estimated_delivery_date
+FROM `{PROJECT_ID}.{DATASET_ID}.orders` o;
 """
+
 
 sql_fact_orders = f"""
 CREATE OR REPLACE TABLE `{PROJECT_ID}.{TARGET_DATASET_ID}.fact_orders` AS

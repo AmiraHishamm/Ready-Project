@@ -16,11 +16,10 @@ dag1 = DAG(
 )
 
 PROJECT_ID = 'ready-de-25'
-DATASET_ID = 'olist_amira'
 TARGET_DATASET_ID = 'olist_modeling_amira'
 
 sql_view_top_customers = f"""
-CREATE OR REPLACE VIEW `{PROJECT_ID}.{DATASET_ID}.top_customers_view` AS
+CREATE OR REPLACE VIEW `{PROJECT_ID}.{TARGET_DATASET_ID}.top_customers_view` AS
 SELECT
     c.customer_id,
     c.customer_unique_id,
@@ -36,7 +35,7 @@ ORDER BY
 """
 
 sql_orders_avg = f"""
-CREATE OR REPLACE VIEW `{PROJECT_ID}.{DATASET_ID}.avg_orders_view` AS
+CREATE OR REPLACE VIEW `{PROJECT_ID}.{TARGET_DATASET_ID}.avg_orders_view` AS
 SELECT
     customer_id,
     COUNT(DISTINCT order_id) AS total_orders,
@@ -70,7 +69,7 @@ ORDER BY
 """
 
 sql_view_total_number_of_orders = f"""
-CREATE OR REPLACE VIEW `{PROJECT_ID}.{DATASET_ID}.total_orders_per_month_view` AS
+CREATE OR REPLACE VIEW `{PROJECT_ID}.{TARGET_DATASET_ID}.total_orders_per_month_view` AS
 SELECT
     EXTRACT(YEAR FROM o.order_purchase_timestamp) AS order_year,
     EXTRACT(MONTH FROM o.order_purchase_timestamp) AS order_month,
@@ -85,7 +84,7 @@ ORDER BY
 """
 
 sql_view_payment = f"""
-CREATE OR REPLACE VIEW `{PROJECT_ID}.{DATASET_ID}.payment_method_view` AS
+CREATE OR REPLACE VIEW `{PROJECT_ID}.{TARGET_DATASET_ID}.payment_method_view` AS
 SELECT
     p.payment_type,
     COUNT(DISTINCT o.order_id) AS total_orders,

@@ -2,7 +2,7 @@ from airflow import DAG
 from airflow.providers.google.cloud.transfers.postgres_to_gcs import (PostgresToGCSOperator)
 from airflow.providers.google.cloud.transfers.gcs_to_bigquery import (GCSToBigQueryOperator)
 from airflow.operators.python import PythonOperator
-from datetime import datetime, timedelta
+from datetime import datetime
 import requests
 from google.cloud import storage
 
@@ -16,7 +16,7 @@ default_args = {
 }
 
 dag1 = DAG(
-    'Transfer_to_bq_amira',
+    'Transfer_from_postgres_to_bq_amira',
     default_args=default_args,
     start_date=datetime(2025, 1, 7),
     description='Transfer postgres to gcs and from gcs to bigquery',

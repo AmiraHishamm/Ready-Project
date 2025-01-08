@@ -9,7 +9,7 @@ default_args = {
 dag1 = DAG(
     'create_views_from_bq_amira',
     default_args=default_args,
-    description='Model Data in BigQuery: Dimensions and Fact Tables',
+    description='Model Data in BigQuery by creating views',
     schedule_interval=None,
     start_date=datetime(2025, 1, 8),
     catchup=False,
@@ -55,7 +55,7 @@ CREATE OR REPLACE VIEW `{PROJECT_ID}.{TARGET_DATASET_ID}.top_selling_products_by
 SELECT
     p.product_id,
     p.product_category_name_english,
-    COUNT(oi.order_item_id) AS total_quantity_sold  -- Use COUNT of order_item_id as the total quantity
+    COUNT(oi.order_item_id) AS total_quantity_sold 
 FROM
     `{PROJECT_ID}.{TARGET_DATASET_ID}.dim_products` p
 JOIN

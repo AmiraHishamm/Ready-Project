@@ -7,7 +7,7 @@ default_args = {
 }
 
 dag1 = DAG(
-    'create_views_from_bq',
+    'create_views_from_bq_amira',
     default_args=default_args,
     description='Model Data in BigQuery: Dimensions and Fact Tables',
     schedule_interval=None,
@@ -43,7 +43,7 @@ SELECT
 FROM
     `{PROJECT_ID}.{TARGET_DATASET_ID}.fact_orders` o
 JOIN
-    `{PROJECT_ID}.{TARGET_DATASET_ID}.dim_customers` c ON o.order_id = c.customer_id  -- Join to get customer_id from dim_customers
+    `{PROJECT_ID}.{TARGET_DATASET_ID}.dim_customers` c ON o.order_id = c.customer_id
 GROUP BY
     c.customer_id;
 

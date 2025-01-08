@@ -7,7 +7,7 @@ default_args = {
 }
 
 dag1 = DAG(
-    'modeling_tables_from_bq',
+    'create_views_from_bq',
     default_args=default_args,
     description='Model Data in BigQuery: Dimensions and Fact Tables',
     schedule_interval=None,

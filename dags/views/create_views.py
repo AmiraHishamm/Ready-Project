@@ -51,24 +51,19 @@ GROUP BY
 
 
 sql_view_top_products = f"""
-CREATE OR REPLACE VIEW `{PROJECT_ID}.{TARGET_DATASET_ID}.top_selling_products_view` AS
+CREATE OR REPLACE VIEW `{PROJECT_ID}.{TARGET_DATASET_ID}.top_selling_products_by_quantity` AS
 SELECT
     p.product_id,
-    t.string_field_1 AS product_category_name_english,
+    p.product_category_name_english,  -- Use the English category name now
     SUM(oi.quantity) AS total_quantity_sold
 FROM
     `{PROJECT_ID}.{TARGET_DATASET_ID}.dim_products` p
 JOIN
     `{PROJECT_ID}.{TARGET_DATASET_ID}.fact_orders` oi ON p.product_id = oi.product_id
-LEFT JOIN
-    `{PROJECT_ID}.{TARGET_DATASET_ID}.product_category_name_translation` t
-    ON p.product_category_name = t.string_field_0 
 GROUP BY
-    p.product_id, t.string_field_1
+    p.product_id, p.product_category_name_english  -- Group by the English category name
 ORDER BY
     total_quantity_sold DESC;
-
-
 """
 
 sql_view_total_number_of_orders = f"""

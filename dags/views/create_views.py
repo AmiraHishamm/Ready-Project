@@ -54,14 +54,14 @@ sql_view_top_products = f"""
 CREATE OR REPLACE VIEW `{PROJECT_ID}.{TARGET_DATASET_ID}.top_selling_products_by_quantity` AS
 SELECT
     p.product_id,
-    p.product_category_name_english,  -- Use the English category name now
-    SUM(oi.quantity) AS total_quantity_sold
+    p.product_category_name_english,
+    COUNT(oi.order_item_id) AS total_quantity_sold  -- Use COUNT of order_item_id as the total quantity
 FROM
     `{PROJECT_ID}.{TARGET_DATASET_ID}.dim_products` p
 JOIN
     `{PROJECT_ID}.{TARGET_DATASET_ID}.fact_orders` oi ON p.product_id = oi.product_id
 GROUP BY
-    p.product_id, p.product_category_name_english  -- Group by the English category name
+    p.product_id, p.product_category_name_english
 ORDER BY
     total_quantity_sold DESC;
 """

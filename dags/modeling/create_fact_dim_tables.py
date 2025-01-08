@@ -52,9 +52,8 @@ SELECT
 FROM 
     `{PROJECT_ID}.{DATASET_ID}.products` p
 LEFT JOIN 
-    `{PROJECT_ID}.{TARGET_DATASET_ID}.product_category_name_translation` t
+    `{PROJECT_ID}.{DATASET_ID}.product_category_name_translation` t
     ON p.product_category_name = t.string_field_0;
-
 """
 
 sql_dim_sellers = f"""

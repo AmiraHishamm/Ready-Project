@@ -7,9 +7,9 @@ default_args = {
 }
 
 dag1 = DAG(
-    'modeling_tables_from_bq',
+    'modeling_tables_from_bq_amira',
     default_args=default_args,
-    description='Model Data in BigQuery: Dimensions and Fact Tables',
+    description='Model Data in BigQuery by applying facts and dimensions',
     schedule_interval=None,
     start_date=datetime(2025, 1, 8),
     catchup=False,
@@ -43,13 +43,18 @@ FROM `{PROJECT_ID}.{DATASET_ID}.geolocation`;
 sql_dim_products = f"""
 CREATE OR REPLACE TABLE `{PROJECT_ID}.{TARGET_DATASET_ID}.dim_products` AS
 SELECT
-    product_id,
-    product_category_name,
-    product_weight_g,
-    product_length_cm,
-    product_height_cm,
-    product_width_cm
-FROM `{PROJECT_ID}.{DATASET_ID}.products`;
+    p.product_id,
+    t.string_field_1 AS product_category_name_english,
+    p.product_weight_g,
+    p.product_length_cm,
+    p.product_height_cm,
+    p.product_width_cm
+FROM 
+    `{PROJECT_ID}.{DATASET_ID}.products` p
+LEFT JOIN 
+    `{PROJECT_ID}.{TARGET_DATASET_ID}.product_category_name_translation` t
+    ON p.product_category_name = t.string_field_0;
+
 """
 
 sql_dim_sellers = f"""
